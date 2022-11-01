@@ -5,22 +5,37 @@ const { body, validationResult } = require("express-validator");
 const userinfo = require("../models/userInfo");
 const fetchAdmin = require('../middleware/fetchadmin');
 const { NotBeforeError } = require("jsonwebtoken");
+// Rout 1 :fetch all Info get "/api/notes/allinfo" login require
+router.get("/allinfo", fetchAdmin, async (req, res) => {
+  try {
+    const note = await userinfo.find({ user: req.user.id });
+    res.json(note);
+    // res.json([])
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: "error occcoure" });
+  }
+});
+
 router.post(
     "/adduserdetails", fetchAdmin,
     [
-      body("name", "Enter a name").exists(),
-      body("marks", "Enter marks").isNumeric(),
+      body("title", "Enter a name").isLength({ min: 3 }),
+      body("email", "Enter email").isLength({ min: 3 }),
+      body("department", "Enter department").isLength({ min: 2 }),
+      body("roll", "Enter roll").isNumeric(),
     ],
     async (req, res) => {
       try {
-        const { name, marks, roll } = req.body;
+        const { title, email, department ,roll } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           return res.status(400).json({ errors: errors.array() });
         }
         const userInfo = new userinfo({
-            name,
-            marks,
+            title,
+            email,
+            department,
             roll,
             user:req.user.id
         });

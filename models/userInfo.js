@@ -5,12 +5,16 @@ const notesSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref :'user'
   },
-  name: {
+  title: {
     type: String,
     required: true,
   },
 
-  marks: {
+  email: {
+    type: String,
+    required: true,
+  },
+  department: {
     type: String,
     required: true,
   },
